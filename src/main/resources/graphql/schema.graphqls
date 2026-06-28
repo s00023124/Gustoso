@@ -1,0 +1,55 @@
+# Schema GraphQL per Gustoso
+# Espone le stesse entità del REST in modo interrogabile e flessibile
+
+type Query {
+    # Ricette
+    ricette: [Ricetta]
+    ricetta(id: ID!): Ricetta
+    ricettePerDifficolta(difficolta: String!): [Ricetta]
+    ricettePerAutore(username: String!): [Ricetta]
+
+    # Utenti
+    utenti: [Utente]
+    utente(id: ID!): Utente
+
+    # Recensioni di una ricetta
+    recensioniByRicetta(ricettaId: ID!): [Recensione]
+
+    # Contenuti (ricette + articoli insieme)
+    contenuti: [Contenuto]
+}
+
+type Ricetta {
+    id: ID!
+    titolo: String
+    tempoPreparazione: Int
+    difficolta: String
+    procedimento: String
+    copertina: String
+    autore: String
+    categorie: [String]
+}
+
+type Utente {
+    id: ID!
+    username: String
+    email: String
+    telefono: String
+    immagineProfilo: String
+    ruolo: String
+}
+
+type Recensione {
+    id: ID!
+    autore: String
+    voto: Int
+    testo: String
+}
+
+type Contenuto {
+    id: ID!
+    tipo: String
+    titolo: String
+    copertina: String
+    autore: String
+}
