@@ -1,0 +1,791 @@
+{
+  "info": {
+    "name": "Gustoso API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token",   "value": "INCOLLA_QUI_IL_TOKEN_JWT" }
+  ],
+  "item": [
+
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"mario\",\n  \"email\": \"mario@example.com\",\n  \"telefono\": \"3331234567\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('token', json.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Utenti",
+      "item": [
+        {
+          "name": "GET tutti gli utenti (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/utenti", "host": ["{{baseUrl}}"], "path": ["utenti"] }
+          }
+        },
+        {
+          "name": "GET utente per id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/utenti/1", "host": ["{{baseUrl}}"], "path": ["utenti","1"] }
+          }
+        },
+        {
+          "name": "POST crea utente (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/utenti", "host": ["{{baseUrl}}"], "path": ["utenti"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"luigi_creator\",\n  \"email\": \"luigi@example.com\",\n  \"telefono\": \"3339876543\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT aggiorna utente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/utenti/1", "host": ["{{baseUrl}}"], "path": ["utenti","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"mario_aggiornato\",\n  \"email\": \"mario@example.com\",\n  \"telefono\": \"3331234567\",\n  \"immagineProfilo\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT upload immagine profilo",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/utenti/1/immagine", "host": ["{{baseUrl}}"], "path": ["utenti","1","immagine"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "DELETE elimina utente (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/utenti/1", "host": ["{{baseUrl}}"], "path": ["utenti","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Ricette",
+      "item": [
+        {
+          "name": "GET tutte le ricette (paginato)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/ricette?page=0&size=10",
+              "host": ["{{baseUrl}}"], "path": ["ricette"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET ricetta per id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/1", "host": ["{{baseUrl}}"], "path": ["ricette","1"] }
+          }
+        },
+        {
+          "name": "GET cerca per titolo",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/ricette/cerca?titolo=pasta",
+              "host": ["{{baseUrl}}"], "path": ["ricette","cerca"],
+              "query": [{ "key": "titolo", "value": "pasta" }]
+            }
+          }
+        },
+        {
+          "name": "GET per difficoltà",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/per-difficolta/Facile", "host": ["{{baseUrl}}"], "path": ["ricette","per-difficolta","Facile"] }
+          }
+        },
+        {
+          "name": "GET per autore",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/per-autore/chef_anna", "host": ["{{baseUrl}}"], "path": ["ricette","per-autore","chef_anna"] }
+          }
+        },
+        {
+          "name": "GET per categoria",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/per-categoria/1", "host": ["{{baseUrl}}"], "path": ["ricette","per-categoria","1"] }
+          }
+        },
+        {
+          "name": "GET per nome categoria",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/per-nome-categoria/Italiana", "host": ["{{baseUrl}}"], "path": ["ricette","per-nome-categoria","Italiana"] }
+          }
+        },
+        {
+          "name": "GET per ingrediente",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/per-ingrediente/Cheese", "host": ["{{baseUrl}}"], "path": ["ricette","per-ingrediente","Cheese"] }
+          }
+        },
+        {
+          "name": "GET ordinate per data",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/per-data", "host": ["{{baseUrl}}"], "path": ["ricette","per-data"] }
+          }
+        },
+        {
+          "name": "GET ordinate per tempo preparazione",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/per-tempo", "host": ["{{baseUrl}}"], "path": ["ricette","per-tempo"] }
+          }
+        },
+        {
+          "name": "GET statistiche ricetta",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/1/stats", "host": ["{{baseUrl}}"], "path": ["ricette","1","stats"] }
+          }
+        },
+        {
+          "name": "GET dati nutrizionali (Spoonacular)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ricette/1/nutrizione", "host": ["{{baseUrl}}"], "path": ["ricette","1","nutrizione"] }
+          }
+        },
+        {
+          "name": "POST crea ricetta (CREATOR/ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/ricette", "host": ["{{baseUrl}}"], "path": ["ricette"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titolo\": \"Hamburger\",\n  \"tempoPreparazione\": 20,\n  \"difficolta\": \"Facile\",\n  \"procedimento\": \"Formare il patty di manzo, cuocere 3-4 minuti per lato, assemblare nel panino con formaggio, lattuga e pomodoro.\",\n  \"copertina\":  \"Hamburger.png\",\n  \"autoreId\": 2,\n  \"categorieIds\": [1, 5]\n}"
+
+            }
+          }
+        },
+        {
+          "name": "PUT aggiorna ricetta (CREATOR/ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/ricette/1", "host": ["{{baseUrl}}"], "path": ["ricette","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titolo\": \"Hamburger Liv 2.0\",\n  \"tempoPreparazione\": 20,\n  \"difficolta\": \"Media\",\n  \"procedimento\": \"Formare il patty di manzo, cuocere 3-4 minuti per lato, assemblare nel panino con formaggio, lattuga e pomodoro.\",\n  \"copertina\": \"Hamburger.png\",\n  \"autoreId\": 2,\n  \"categorieIds\": [1]\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT upload copertina (CREATOR/ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/ricette/1/copertina", "host": ["{{baseUrl}}"], "path": ["ricette","1","copertina"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "DELETE elimina ricetta (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/ricette/1", "host": ["{{baseUrl}}"], "path": ["ricette","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Contenuti",
+      "item": [
+        {
+          "name": "GET tutti i contenuti (ricette + articoli)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/contenuti", "host": ["{{baseUrl}}"], "path": ["contenuti"] }
+          }
+        },
+        {
+          "name": "GET solo ricette",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/contenuti/ricette", "host": ["{{baseUrl}}"], "path": ["contenuti","ricette"] }
+          }
+        },
+        {
+          "name": "GET solo articoli",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/contenuti/articoli", "host": ["{{baseUrl}}"], "path": ["contenuti","articoli"] }
+          }
+        },
+        {
+          "name": "GET cerca per titolo",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/contenuti/cerca?titolo=pizza",
+              "host": ["{{baseUrl}}"], "path": ["contenuti","cerca"],
+              "query": [{ "key": "titolo", "value": "pizza" }]
+            }
+          }
+        },
+        {
+          "name": "GET per autore",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/contenuti/per-autore/chef_anna", "host": ["{{baseUrl}}"], "path": ["contenuti","per-autore","chef_anna"] }
+          }
+        },
+        {
+          "name": "GET contenuto per id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/contenuti/1", "host": ["{{baseUrl}}"], "path": ["contenuti","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Articoli",
+      "item": [
+        {
+          "name": "GET tutti gli articoli",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/articoli", "host": ["{{baseUrl}}"], "path": ["articoli"] }
+          }
+        },
+        {
+          "name": "GET articolo per id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/articoli/1", "host": ["{{baseUrl}}"], "path": ["articoli","1"] }
+          }
+        },
+        {
+          "name": "POST crea articolo (CREATOR/ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/articoli", "host": ["{{baseUrl}}"], "path": ["articoli"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titolo\": \"La storia della pasta italiana\",\n  \"copertina\": \"https://example.com/pasta-storia.jpg\",\n  \"tempoDiLettura\": 5,\n  \"corpo\": \"Un viaggio nella tradizione culinaria italiana attraverso i secoli.\",\n  \"autoreId\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT aggiorna articolo (CREATOR/ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/articoli/1", "host": ["{{baseUrl}}"], "path": ["articoli","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titolo\": \"La storia della pasta italiana (aggiornato)\",\n  \"copertina\": \"https://example.com/pasta-storia.jpg\",\n  \"tempoDiLettura\": 7,\n  \"corpo\": \"Versione aggiornata con nuovi approfondimenti sulla tradizione.\",\n  \"autoreId\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE elimina articolo (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/articoli/1", "host": ["{{baseUrl}}"], "path": ["articoli","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Categorie",
+      "item": [
+        {
+          "name": "GET tutte le categorie",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/categorie", "host": ["{{baseUrl}}"], "path": ["categorie"] }
+          }
+        },
+        {
+          "name": "GET categoria per id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/categorie/1", "host": ["{{baseUrl}}"], "path": ["categorie","1"] }
+          }
+        },
+        {
+          "name": "POST crea categoria (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/categorie", "host": ["{{baseUrl}}"], "path": ["categorie"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Primi piatti\",\n  \"tipo\": \"Cucina italiana\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT aggiorna categoria (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/categorie/1", "host": ["{{baseUrl}}"], "path": ["categorie","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Primi piatti aggiornato\",\n  \"tipo\": \"Cucina italiana\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE elimina categoria (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/categorie/1", "host": ["{{baseUrl}}"], "path": ["categorie","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Ingredienti",
+      "item": [
+        {
+          "name": "GET tutti gli ingredienti",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ingredienti", "host": ["{{baseUrl}}"], "path": ["ingredienti"] }
+          }
+        },
+        {
+          "name": "GET ingrediente per id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/ingredienti/1", "host": ["{{baseUrl}}"], "path": ["ingredienti","1"] }
+          }
+        },
+        {
+          "name": "POST crea ingrediente (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/ingredienti", "host": ["{{baseUrl}}"], "path": ["ingredienti"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Pomodoro\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT aggiorna ingrediente (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/ingredienti/1", "host": ["{{baseUrl}}"], "path": ["ingredienti","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Pomodoro San Marzano\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE elimina ingrediente (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/ingredienti/1", "host": ["{{baseUrl}}"], "path": ["ingredienti","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Ricetta-Ingredienti",
+      "item": [
+        {
+          "name": "GET tutte le associazioni",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/ricetta-ingredienti", "host": ["{{baseUrl}}"], "path": ["ricetta-ingredienti"] }
+          }
+        },
+        {
+          "name": "GET associazione per id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/ricetta-ingredienti/1", "host": ["{{baseUrl}}"], "path": ["ricetta-ingredienti","1"] }
+          }
+        },
+        {
+          "name": "POST crea associazione (CREATOR/ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/ricetta-ingredienti", "host": ["{{baseUrl}}"], "path": ["ricetta-ingredienti"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ricettaId\": 1,\n  \"ingredienteId\": 1,\n  \"quantita\": 200,\n  \"unita\": \"g\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT aggiorna associazione (CREATOR/ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/ricetta-ingredienti/1", "host": ["{{baseUrl}}"], "path": ["ricetta-ingredienti","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ricettaId\": 1,\n  \"ingredienteId\": 1,\n  \"quantita\": 300,\n  \"unita\": \"g\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE elimina associazione (CREATOR/ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/ricetta-ingredienti/1", "host": ["{{baseUrl}}"], "path": ["ricetta-ingredienti","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Recensioni",
+      "item": [
+        {
+          "name": "GET tutte le recensioni",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/recensioni", "host": ["{{baseUrl}}"], "path": ["recensioni"] }
+          }
+        },
+        {
+          "name": "GET recensione per id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/recensioni/1", "host": ["{{baseUrl}}"], "path": ["recensioni","1"] }
+          }
+        },
+        {
+          "name": "POST crea recensione",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/recensioni", "host": ["{{baseUrl}}"], "path": ["recensioni"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autoreId\": 1,\n  \"ricettaId\": 1,\n  \"voto\": 5,\n  \"testo\": \"Ricetta fantastica, l'ho rifatta tre volte!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT aggiorna recensione",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/recensioni/1", "host": ["{{baseUrl}}"], "path": ["recensioni","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autoreId\": 1,\n  \"ricettaId\": 1,\n  \"voto\": 4,\n  \"testo\": \"Molto buona, ma un po' lunga da preparare.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE elimina recensione (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/recensioni/1", "host": ["{{baseUrl}}"], "path": ["recensioni","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Commenti",
+      "item": [
+        {
+          "name": "GET tutti i commenti",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/commenti", "host": ["{{baseUrl}}"], "path": ["commenti"] }
+          }
+        },
+        {
+          "name": "GET commento per id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/commenti/1", "host": ["{{baseUrl}}"], "path": ["commenti","1"] }
+          }
+        },
+        {
+          "name": "POST crea commento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/commenti", "host": ["{{baseUrl}}"], "path": ["commenti"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autoreId\": 1,\n  \"contenutoId\": 1,\n  \"testo\": \"Grazie per la ricetta, era deliziosa!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT aggiorna commento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/commenti/1", "host": ["{{baseUrl}}"], "path": ["commenti","1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autoreId\": 1,\n  \"contenutoId\": 1,\n  \"testo\": \"Commento aggiornato.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE elimina commento (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/commenti/1", "host": ["{{baseUrl}}"], "path": ["commenti","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "GraphQL",
+      "item": [
+        {
+          "name": "ricette (tutte)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/graphql", "host": ["{{baseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ ricette { id titolo difficolta tempoPreparazione autore categorie } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "ricetta (per id)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/graphql", "host": ["{{baseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ ricetta(id: 1) { id titolo difficolta tempoPreparazione procedimento autore categorie } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "ricettePerDifficolta",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/graphql", "host": ["{{baseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ ricettePerDifficolta(difficolta: \\\"Facile\\\") { id titolo autore } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "ricettePerAutore",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/graphql", "host": ["{{baseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ ricettePerAutore(username: \\\"chef_anna\\\") { id titolo difficolta } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "utenti (tutti)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/graphql", "host": ["{{baseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ utenti { id username email } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "utente (per id)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/graphql", "host": ["{{baseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ utente(id: 1) { id username email telefono immagineProfilo } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "recensioniByRicetta",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/graphql", "host": ["{{baseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ recensioniByRicetta(ricettaId: 1) { id autore voto testo } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "contenuti (ricette + articoli)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/graphql", "host": ["{{baseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ contenuti { id tipo titolo autore copertina } }\"\n}"
+            }
+          }
+        }
+      ]
+    }
+
+  ]
+}
